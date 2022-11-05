@@ -31,11 +31,10 @@ const updateState = async (req, res) => {
         const { state } = req.body;
         const user = req.user._id
 
-        // const article = await Blog.findById(id)
         try{
             const article = await Blog.findOne({id, author: req.user._id})
-            console.log(user)
-            console.log(article.author)
+            console.log({'user':user})
+            console.log({'author':article.author})
             
             
 
@@ -43,11 +42,7 @@ const updateState = async (req, res) => {
                 console.log('you are not the author')
                 return res.status(404).json({ status: false, article: null })
             }
-            // console.log(article.author)
-            // console.log(req.user._id)
-            // if(article.author !== req.user._id){
-            //     return res.status(400).json({message: 'You are not the owner of the article'})
-            // }
+            
 
             if(article.state === 'published'){
                 return res.status(400).json({message: 'Article already published'})
@@ -69,6 +64,7 @@ const editArticle = async (req, res, next) => {
 
     const { id } = req.params;
     const update = Object.keys(req.body);
+    const user = req.user._id
     const allowedUpdate = ['description', 'title', 'body', 'tags']
     const isValidOperation = update.every((update) => {
         return allowedUpdate.includes(update)
@@ -79,8 +75,12 @@ const editArticle = async (req, res, next) => {
     }
 
     try{
+
+        const article = await Blog.findOne({id, author: req.user._id})
+            console.log({'user':user})
+            console.log({'author':article.author})
         
-        const article = await Blog.findById(id)
+        // const article = await Blog.findById(id)
         update.forEach((update) => article[update] = req.body[update])
 
         if (!article) {
@@ -128,11 +128,35 @@ const getArticleById = async (req, res) => {
         return res.status(404).json({ status: false, article: null })
     }
 
+    article.read_count += 1;
+    await article.save()
+
     return res.json({ status: true, article })
     } catch(err){
         return res.json(err);
     }
     
+}
+
+const deleteArticleById = async (req, res) => {
+    const {id} = req.params.id;
+    const user = req.user._id
+
+    try{
+        
+        const article = await Blog.findOneAndDelete({id, author: req.user._id})
+            console.log({'user':user})
+            console.log({'author':article.author})
+
+        if (!article) {
+            return res.status(404).json({ status: false, article: null })
+        }
+
+        return res.json({ status: true, article })
+         
+    } catch(err){
+        return res.json(err);
+    }
 }
 
 
@@ -141,5 +165,6 @@ module.exports = {
     updateState,
     editArticle,
     getArticles,
-    getArticleById
+    getArticleById,
+    deleteArticleById
 }
