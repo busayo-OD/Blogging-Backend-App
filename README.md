@@ -106,3 +106,34 @@ Success
     message: 'Login successful',
     token: 'sjlkafjkldsfjsd'
 }
+
+### Create Article
+
+- Route: /blogs/create
+- Method: POST
+- Header
+    - Authorization: Bearer {token}
+Body: 
+```
+{
+    "title": "On Becoming Bold",
+    "description": "A motivational book",
+    "tags": "Self Development"
+    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}
+- Responses
+
+Success
+```
+{
+    "title": "",
+    "description": "",
+    "author": "",
+    "state": "",
+    "read_count": 0,
+    "reading_time": {},
+    "tags": "",
+    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}
+```
+---
