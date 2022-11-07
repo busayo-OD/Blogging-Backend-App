@@ -51,3 +51,58 @@ This is a blog app
 |  reading_time |  object | optional |
 |  tags |  string | optional |
 |  body |  string |  required |
+
+
+## APIs
+---
+
+### Signup User
+
+- Route: /register
+- Method: POST
+- Body: 
+```
+{
+  "first_name": "Busayo",
+  "last_name": "Dada",
+  "email": "toyinoluwabusayo@gmail.com",
+  "password": "bussyj"
+}
+```
+
+- Responses
+
+Success
+```
+{
+    message: 'Signup successful',
+    user: {
+        "first_name": "Busayo",
+        "last_name": "Dada",
+        "email": "toyinoluwabusayo@gmail.com",
+        "password": "encrypted characters",
+        "articles": [],
+        "_id": "generated id"
+    }
+}
+
+### Login User
+
+- Route: /login
+- Method: POST
+- Body: 
+```
+{
+  "email": "toyinoluwabusayo@gmail.com",
+  "password": 'bussyj",
+}
+```
+
+- Responses
+
+Success
+```
+{
+    message: 'Login successful',
+    token: 'sjlkafjkldsfjsd'
+}
