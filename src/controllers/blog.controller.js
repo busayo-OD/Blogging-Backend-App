@@ -104,8 +104,8 @@ const getArticles = async (req, res) => {
         title,
         tags,
         state,
-        page = 1, 
-        per_page = 20
+        // page = 1, 
+        // per_page = 20
     } = query
 
     const findQuery = {};
@@ -127,8 +127,8 @@ const getArticles = async (req, res) => {
             
         const articles = await Blog
         .find(findQuery)
-        .skip(page)
-        .limit(per_page)
+        // .skip(page)
+        // .limit(per_page)
         
         return res.json({ status: true, articles })
 
@@ -142,27 +142,11 @@ const getArticles = async (req, res) => {
 }
 
 const ownerArticles = async (req, res) => {
-    // const {query} = req;
-    // const {
-    //     state,
-    //     page = 1, 
-    //     per_page = 5,
-    // } = query;
-    // const findQuery = {};
-
-    // if(state){
-    //     findQuery.state = state;
-    // }
+    
     
     try{
         const user = await User.findOne({id:req.user._id}).populate('articles').exec()
         
-    //    const Articles = user.articles
-    //    .find(findQuery)
-    //    .skip(page)
-    //    .limit(per_page)
-    //    const articles =  user.articles.find(findQuery);
-    //     console.log(articles)
         return res.status(200).send(user.articles)
     } catch(err) {
         return res.json(err);
