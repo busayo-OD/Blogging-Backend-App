@@ -11,12 +11,12 @@ const register = async (req, res, next) => {
         last_name: req.body.last_name,
         email: req.body.email,
         password: await bcrypt.hash(req.body.password, 8),
-        user_type: req.body.user_type
+        
     })
 
     try{
-       const savedUser = await newUser.save();
-        res.status(201).send({ savedUser})
+       const user = await newUser.save();
+        res.status(201).send({message: 'Signup successful', user: user})
         
     } 
     catch(err){
@@ -48,6 +48,7 @@ const login = async(req, res, next) => {
     }
     
 }
+
 
 
 

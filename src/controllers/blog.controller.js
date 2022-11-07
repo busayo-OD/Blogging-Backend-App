@@ -1,6 +1,6 @@
 const Blog = require('../models/blog.model');
 const readingTime = require('reading-time');
-const verifyToken = require('../middleware/auth')
+const User = require('../models/user.model')
 
 const createArticle = async (req, res, next) =>{
     
@@ -16,7 +16,10 @@ const createArticle = async (req, res, next) =>{
     })
     
     try{
+        const user = req.user;
         const savedArticle = await newArticle.save();
+        user.articles = user.articles.concat(savedArticle._id)
+        await user.save()
         
         res.status(201).json(savedArticle) 
      } 
@@ -26,38 +29,37 @@ const createArticle = async (req, res, next) =>{
 }
 
 const updateState = async (req, res) => {
-    
-        const { id } = req.params;
-        const { state } = req.body;
-        const user = req.user._id
+    const { id } = req.params;
+    const { state } = req.body;
+    const user = req.user._id
+    try{
+        const article = await Blog.findOne({id, author: req.user._id})
+        console.log({'user':user})
+        console.log({'author':article.author})
+        
+        
 
-        try{
-            const article = await Blog.findOne({id, author: req.user._id})
-            console.log({'user':user})
-            console.log({'author':article.author})
-            
-            
-
-            if (!article) {
-                console.log('you are not the author')
-                return res.status(404).json({ status: false, article: null })
-            }
-            
-
-            if(article.state === 'published'){
-                return res.status(400).json({message: 'Article already published'})
-            }
-
-            article.state = state;
-
-            await article.save()
-
-            return res.json({ status: true, article })
+        if (!article) {
+            console.log('you are not the author')
+            return res.status(404).json({ status: false, article: null })
         }
-         catch(err){
-            console.log(err)
-            res.json(err)
+        
+        switch (state){
+            case 'published':
+                article.state = state;
+                await article.save();
+                return res.json({ status: true, article })
+
+            case 'draft':
+                return res.status(400).json("not allowed")
+        }
+    
+        
     }
+     catch(err){
+        console.log(err)
+        res.json(err)
+}  
 }
 
 const editArticle = async (req, res, next) => {
@@ -97,25 +99,74 @@ const editArticle = async (req, res, next) => {
 }
 
 const getArticles = async (req, res) => {
-    
-    const { state} = req.query;
-    const findQuery = {};
+    const {query} = req;
+    const {
+        title,
+        tags,
+        state,
+        page = 1, 
+        per_page = 20
+    } = query
 
+    const findQuery = {};
+    
+    
     try{
-        if (state === 'published') {
-            findQuery.state = state;
-            const articles = await Blog.find(findQuery)
-            return res.json({ status: true, articles })
+
+        if(state === 'draft'){
+            return res.status(400).send({ error: 'you cannot read book in draft state'})
         }
-        else {
-            return res.json({ status: false, message: 'not allowed'})
+        findQuery.state = state
+        if (title) {
+            findQuery.title = title;
         }
+        else if(tags){
+            findQuery.tags = tags;
+        }
+        
+            
+        const articles = await Blog
+        .find(findQuery)
+        .skip(page)
+        .limit(per_page)
+        
+        return res.json({ status: true, articles })
+
+    
     } catch(err){
         return res.json(err);
     }
     
 
     
+}
+
+const ownerArticles = async (req, res) => {
+    // const {query} = req;
+    // const {
+    //     state,
+    //     page = 1, 
+    //     per_page = 5,
+    // } = query;
+    // const findQuery = {};
+
+    // if(state){
+    //     findQuery.state = state;
+    // }
+    
+    try{
+        const user = await User.findOne({id:req.user._id}).populate('articles').exec()
+        
+    //    const Articles = user.articles
+    //    .find(findQuery)
+    //    .skip(page)
+    //    .limit(per_page)
+    //    const articles =  user.articles.find(findQuery);
+    //     console.log(articles)
+        return res.status(200).send(user.articles)
+    } catch(err) {
+        return res.json(err);
+    }
 }
 
 const getArticleById = async (req, res) => {
@@ -165,6 +216,7 @@ module.exports = {
     updateState,
     editArticle,
     getArticles,
+    ownerArticles,
     getArticleById,
     deleteArticleById
 }

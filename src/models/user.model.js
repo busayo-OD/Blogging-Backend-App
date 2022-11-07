@@ -7,24 +7,20 @@ const userSchema = new Schema({
   last_name: { type: String, required: true },
   email: { type: String, required: true, unique: true}, 
   password: { type: String, required: true },
-  user_type:  { 
-    type: String, 
-    required: true, 
-    enum: ['user', 'admin'], 
-    default: 'user' 
-  }
-  // articles: {
-  //    type: mongoose.Types.ObjectId,
-  //    ref: 'Articles'
-  //   }
+  articles: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ]
   
 });
 
-userSchema.virtual('articles', {
-  ref: 'Blog',
-  localField: '_id',
-  foreignField: 'author'
-})
+// userSchema.virtual('articles', {
+//   ref: 'Blog',
+//   localField: '_id',
+//   foreignField: 'author'
+// })
 
 const User = mongoose.model('User', userSchema);
 
