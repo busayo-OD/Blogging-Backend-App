@@ -104,8 +104,8 @@ const getArticles = async (req, res) => {
         title,
         tags,
         state,
-        // page = 1, 
-        // per_page = 20
+        page = 1, 
+        per_page = 20
     } = query
 
     const findQuery = {};
@@ -127,8 +127,8 @@ const getArticles = async (req, res) => {
             
         const articles = await Blog
         .find(findQuery)
-        // .skip(page)
-        // .limit(per_page)
+        .skip(page)
+        .limit(per_page)
         
         return res.json({ status: true, articles })
 
