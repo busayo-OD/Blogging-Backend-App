@@ -108,7 +108,7 @@ Success
 }
 
 ### Create Article
-
+## Only a logged in user can create an article
 - Route: /blogs/create
 - Method: POST
 - Header
@@ -135,5 +135,160 @@ Success
     "tags": "",
     "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 }
+
+
+### Update Article from draft state to published state
+This operation can only be carried out by the owner of the article
+
+- Route: /blogs/state/:id
+- Method: PATCH
+- Header
+    - Authorization: Bearer {token}
+Body: 
 ```
----
+{
+    "state": "published"
+}
+
+- Responses
+
+Success
+```
+{
+    "title": "",
+    "description": "",
+    "author": "",
+    "state": "published",
+    "read_count": 0,
+    "reading_time": {},
+    "tags": "",
+    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}
+
+### Edit article
+
+This operation can only be carried out by the owner of the article
+
+The following fields can be edited : description, title, body & tags
+
+- Route: /blogs/edit/:id
+- Method: PATCH
+- Header
+    - Authorization: Bearer {token}
+
+Body: 
+```
+{
+    Any or all of the fields mentioned above
+}
+
+- Responses
+
+Success
+```
+{
+    "title": "",
+    "description": "",
+    "author": "",
+    "state": "",
+    "read_count": 0,
+    "reading_time": {},
+    "tags": "",
+    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}
+
+### Get published Articles
+
+- Route: /blogs
+- Method: GET
+
+- Query params: 
+    - page (default: 1)
+    - per_page (default: 20)
+    - tags
+    - title
+    - state
+    
+- Responses
+
+Success
+```
+{
+    "title": "",
+    "description": "",
+    "author": "",
+    "state": "",
+    "read_count": 0,
+    "reading_time": {},
+    "tags": "",
+    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}
+```
+### This endpoint allows a logged in user to get a list of his/her articles 
+
+- Route: /blogs/owner
+- Method: GET
+
+- Header
+    - Authorization: Bearer {token}
+
+- Responses
+
+Success
+[```
+    {
+        "title": "",
+        "description": "",
+        "author": "",
+        "state": "",
+        "read_count": 0,
+        "reading_time": {},
+        "tags": "",
+        "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    }
+]
+
+
+
+### Get a published article
+
+- Route: /blogs/:id
+- Method: GET
+
+- Responses
+
+Success
+```
+{
+    "title": "",
+    "description": "",
+    "author": "",
+    "state": "",
+    "read_count": 0,
+    "reading_time": {},
+    "tags": "",
+    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}
+
+
+```
+
+#### A logged in user can delete his/her article with this endpoint
+
+- Route: /blogs/delete/:id
+- Method: DELETE
+
+- Responses
+
+Success
+```
+{
+    "title": "",
+    "description": "",
+    "author": "",
+    "state": "",
+    "read_count": 0,
+    "reading_time": {},
+    "tags": "",
+    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}

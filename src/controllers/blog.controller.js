@@ -89,9 +89,9 @@ const editArticle = async (req, res, next) => {
             return res.status(404).json({ status: false, article: null })
         }
         
-        const newArticle = await article.save()
+        await article.save()
 
-        return res.json({ status: true, newArticle })
+        return res.json({ status: true, article })
         
     } catch(err){
         next(err)
