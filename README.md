@@ -28,29 +28,29 @@ This is a blog app
 ---
 
 ### User
-| field  |  data_type | constraints  |
-|---|---|---|
-|  id |  string |  required |
-|  first_name |  string |  required |
-|  last_name | string  |  required|
-|  email  |  string |  required && unique  |
-|  password     | string  |  required |
-|  articles |   object |  ref = Blog |
+| field       |  data_type | constraints  |
+|-------------|------------|--------------|
+|  id         |  string    |  required    |
+|  first_name |  string    |  required    |
+|  last_name  | string     |  required    |
+|  email      |  string    |  required && unique  |
+|  password   | string     |  required |
+|  articles   |   object   |  ref = Blog |
 
 
 
 ### Blog
-| field  |  data_type | constraints  |
-|---|---|---|
-|  id |  string |  required |
-|  title |  string |  required && unique |
-|  description | string  | optional|
-|  author  |  objectId |  required && ref = User|
-|  state     | string  |  required , enum: ['draft', 'published']|
-|  read_count |   number |  default = 0 |
-|  reading_time |  object | optional |
-|  tags |  string | optional |
-|  body |  string |  required |
+| field         | data_type | constraints  |
+|---------------|-----------|--------------|
+|  id           |  string   |  required |
+|  title        |  string   |  required && unique |
+|  description  | string    | optional|
+|  author       |  objectId |  required && ref = User|
+|  state        | string    |  required , enum: ['draft', 'published']|
+|  read_count   |  number   |  default = 0 |
+|  reading_time |  object   | optional |
+|  tags         |  string   | optional |
+|  body         |  string   |  required |
 
 
 ## APIs
@@ -58,7 +58,7 @@ This is a blog app
 
 ### Signup User
 
-- Route: /register
+- Route: https://beautiful-singlet-lion.cyclic.app/register
 - Method: POST
 - Body: 
 ```
@@ -88,7 +88,7 @@ Success
 
 ### Login User
 
-- Route: /login
+- Route: https://beautiful-singlet-lion.cyclic.app/login
 - Method: POST
 - Body: 
 ```
@@ -109,7 +109,7 @@ Success
 
 ### Create Article
 ## Only a logged in user can create an article
-- Route: /blogs/create
+- Route: https://beautiful-singlet-lion.cyclic.app/blogs/create
 - Method: POST
 - Header
     - Authorization: Bearer {token}
@@ -140,7 +140,7 @@ Success
 ### Update Article from draft state to published state
 This operation can only be carried out by the owner of the article
 
-- Route: /blogs/state/:id
+- Route: https://beautiful-singlet-lion.cyclic.app/blogs/state/:id
 - Method: PATCH
 - Header
     - Authorization: Bearer {token}
@@ -171,7 +171,7 @@ This operation can only be carried out by the owner of the article
 
 The following fields can be edited : description, title, body & tags
 
-- Route: /blogs/edit/:id
+- Route: https://beautiful-singlet-lion.cyclic.app/blogs/edit/:id
 - Method: PATCH
 - Header
     - Authorization: Bearer {token}
@@ -199,7 +199,7 @@ Success
 
 ### Get published Articles
 
-- Route: /blogs
+- Route: https://beautiful-singlet-lion.cyclic.app/blogs
 - Method: GET
 
 - Query params: 
@@ -226,7 +226,7 @@ Success
 ```
 ### This endpoint allows a logged in user to get a list of his/her articles 
 
-- Route: /blogs/owner
+- Route: https://beautiful-singlet-lion.cyclic.app/blogs/owner
 - Method: GET
 
 - Header
@@ -252,7 +252,7 @@ Success
 
 ### Get a published article
 
-- Route: /blogs/:id
+- Route: https://beautiful-singlet-lion.cyclic.app/blogs/:id
 - Method: GET
 
 - Responses
@@ -275,7 +275,7 @@ Success
 
 #### A logged in user can delete his/her article with this endpoint
 
-- Route: /blogs/delete/:id
+- Route: https://beautiful-singlet-lion.cyclic.app/blogs/delete/:id
 - Method: DELETE
 
 - Responses

@@ -2,8 +2,7 @@ const Blog = require('../models/blog.model');
 const readingTime = require('reading-time');
 const User = require('../models/user.model')
 
-const createArticle = async (req, res, next) =>{
-    
+const createArticle = async (req, res) =>{
     
     const newArticle = new Blog({
         title: req.body.title,
@@ -24,7 +23,8 @@ const createArticle = async (req, res, next) =>{
         res.status(201).json(savedArticle) 
      } 
      catch(err){
-         next(err)
+        console.log(err)
+        res.json(err)
      }
 }
 
@@ -32,37 +32,38 @@ const updateState = async (req, res) => {
     const { id } = req.params;
     const { state } = req.body;
     const user = req.user._id
+
     try{
-        const article = await Blog.findOne({id, author: req.user._id})
-        console.log({'user':user})
-        console.log({'author':article.author})
-        
-        
-
+        const article = await Blog.findById(id)
         if (!article) {
-            console.log('you are not the author')
-            return res.status(404).json({ status: false, article: null })
+            console.log("Article not found")
+            return res.status(404).send({ error: 'Article not found'})
         }
-        
-        switch (state){
-            case 'published':
-                article.state = state;
-                await article.save();
-                return res.json({ status: true, article })
 
-            case 'draft':
-                return res.status(400).json("not allowed")
+        console.log(`User: ${user}`)
+        console.log(`Author: ${article.author}`)
+
+        if(user.toString() !== article.author.toString()){
+            console.log('You are not the author')
+            return res.status(404).json({ status: false, article: null })          
         }
-    
-        
-    }
-     catch(err){
+
+    switch (state){
+        case 'published':
+            article.state = state;
+            await article.save();
+            return res.json({ status: true, article })
+
+        case 'draft':
+            return res.status(400).json("not allowed")
+}   
+    } catch(err){
         console.log(err)
         res.json(err)
-}  
+    }
 }
 
-const editArticle = async (req, res, next) => {
+const editArticle = async (req, res) => {
 
     const { id } = req.params;
     const update = Object.keys(req.body);
@@ -77,24 +78,29 @@ const editArticle = async (req, res, next) => {
     }
 
     try{
-
-        const article = await Blog.findOne({id, author: req.user._id})
-            console.log({'user':user})
-            console.log({'author':article.author})
-        
-        // const article = await Blog.findById(id)
-        update.forEach((update) => article[update] = req.body[update])
+        const article = await Blog.findById(id)
 
         if (!article) {
-            return res.status(404).json({ status: false, article: null })
+            console.log("Article not found")
+            return res.status(404).send({ error: 'Article not found'})
+        }
+
+        console.log(`User: ${user}`)
+        console.log(`Author: ${article.author}`)
+
+        update.forEach((update) => article[update] = req.body[update])
+
+        if(user.toString() !== article.author.toString()){
+            console.log('You are not the author')
+            return res.status(404).json({ status: false, article: null })       
         }
         
         await article.save()
-
-        return res.json({ status: true, article })
+        return res.status(200).json({ status: true, article })
         
     } catch(err){
-        next(err)
+        console.log(err)
+        res.json(err)
     }
 }
 
@@ -135,19 +141,15 @@ const getArticles = async (req, res) => {
     
     } catch(err){
         return res.json(err);
-    }
-    
-
-    
+    }   
 }
 
 const ownerArticles = async (req, res) => {
     
-    
     try{
         const user = await User.findOne({id:req.user._id}).populate('articles').exec()
-        
         return res.status(200).send(user.articles)
+        
     } catch(err) {
         return res.json(err);
     }
@@ -167,27 +169,34 @@ const getArticleById = async (req, res) => {
     await article.save()
 
     return res.json({ status: true, article })
+
     } catch(err){
         return res.json(err);
-    }
-    
+    }   
 }
 
 const deleteArticleById = async (req, res) => {
-    const {id} = req.params.id;
+    const { id } = req.params;
     const user = req.user._id
 
     try{
-        
-        const article = await Blog.findOneAndDelete({id, author: req.user._id})
-            console.log({'user':user})
-            console.log({'author':article.author})
+        const article = await Blog.findById(id)
 
         if (!article) {
-            return res.status(404).json({ status: false, article: null })
+            console.log("Article not found")
+            return res.status(404).send({ error: 'Article not found'})
+        }
+        
+        console.log(`User: ${user}`)
+        console.log(`Author: ${article.author}`)
+
+        if(user.toString() !== article.author.toString()){
+            console.log('You are not the author')
+            return res.status(404).json({ status: false, article: null })       
         }
 
-        return res.json({ status: true, article })
+        await article.delete()
+        return res.status(200).json({ message: 'Article deleted', article })
          
     } catch(err){
         return res.json(err);
