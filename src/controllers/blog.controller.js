@@ -48,19 +48,23 @@ const updateState = async (req, res) => {
             return res.status(404).json({ status: false, article: null })          
         }
 
-    switch (state){
-        case 'published':
-            article.state = state;
-            await article.save();
-            return res.json({ status: true, article })
+        if(article.state === "published"){
+            return res.status(400).send({ error: 'Article already published'})
+        }
 
-        case 'draft':
-            return res.status(400).json("not allowed")
-}   
-    } catch(err){
-        console.log(err)
-        res.json(err)
-    }
+        switch (state){
+            case 'published':
+                article.state = state;
+                await article.save();
+                return res.json({ status: true, article })
+
+            case 'draft':
+                return res.status(400).json("not allowed")
+        }   
+        } catch(err){
+            console.log(err)
+            res.json(err)
+        }
 }
 
 const editArticle = async (req, res) => {
@@ -120,7 +124,7 @@ const getArticles = async (req, res) => {
     try{
 
         if(state === 'draft'){
-            return res.status(400).send({ error: 'you cannot read book in draft state'})
+            return res.status(400).send({ error: 'You cannot read book in draft state'})
         }
         findQuery.state = state
         if (title) {
