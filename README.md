@@ -1,6 +1,12 @@
 # Blogging App
 This is a blog app
 
+## Tools and Technologies
+- Javascript
+- Node.js
+- Express
+- Mongodb
+
 ---
 
 ## Requirements
